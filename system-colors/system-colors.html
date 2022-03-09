@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style type="text/css">
+      div {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: sans-serif;
+        line-height: 1.5rem;
+      }
+
+      td {
+        padding: 0.2rem 2rem;
+      }
+
+      tr {
+        margin: 1rem 0;
+      }
+
+      table {
+        width: 90%;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>System Color Test</h1>
+      <h2>System Colors</h2>
+      <table id="system-colors"></table>
+
+      <h2>Mozilla Colors</h2>
+      <table id="moz-colors"></table>
+    </div>
+
+    <script>
+      const systemTableElement = document.querySelector("#system-colors");
+      const mozTableElement = document.querySelector("#moz-colors");
+      // https://drafts.csswg.org/css-color/#css-system-colors
+      // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#system_colors
+      const systemColors = [
+        ["ActiveText", "Text of active links"],
+        ["ButtonBorder", "Base border color of controls"],
+        ["ButtonFace", "Background color of controls"],
+        ["ButtonText", "Foreground color of controls"],
+        ["Canvas", "Background of application content or documents"],
+        ["CanvasText", "Foreground color in application content or documents"],
+        ["Field", "Background of input fields"],
+        ["FieldText", "Text in input fields"],
+        [
+          "GrayText",
+          "Foreground color for disabled items (e.g. a disabled control)",
+        ],
+        ["Highlight", "Background of selected items"],
+        ["HighlightText", "Foreground color of selected items"],
+        ["LinkText", "Text of non-active, non-visited links"],
+        [
+          "Mark",
+          "Background of text that has been specially marked (such as by the HTML mark element)",
+        ],
+        [
+          "MarkText",
+          "Text that has been specially marked (such as by the HTML mark element)",
+        ],
+
+        ["SelectedItem", "Background of selected item."],
+        ["SelectedItemText", "Text of selected items"],
+        ["VisitedText", "Text of visited links"],
+      ];
+
+      // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#mozilla_system_color_extensions
+
+      const mozColors = [
+        [
+          "-moz-ButtonDefault",
+          "The border color that goes around buttons that represent the default action for a dialog box.",
+        ],
+        [
+          "-moz-ButtonHoverFace",
+          "The background color of a button that the mouse pointer is over (which would be ThreeDFace or ButtonFace when the mouse pointer is not over it). Should be used with the -moz-ButtonHoverText foreground color.",
+        ],
+        [
+          "-moz-ButtonHoverText",
+          "The text color of a button that the mouse pointer is over (which would be ButtonText when the mouse pointer is not over it). Should be used with the -moz-ButtonHoverFace background color.",
+        ],
+        [
+          "-moz-CellHighlight",
+          "Background color for selected item in a tree widget. ",
+        ],
+        ["-moz-CellHighlightText", "Text color for a selected item in a tree."],
+        ["-moz-Combobox", "Background color for combo-boxes."],
+        ["-moz-ComboboxText", "Text color for combo-boxes."],
+        ["-moz-Dialog", "Background color for dialog boxes."],
+        ["-moz-DialogText", "Text color for dialog boxes."],
+        [
+          "-moz-dragtargetzone",
+          "Background color for even-numbered rows in a tree.",
+        ],
+        [
+          "-moz-EvenTreeRow",
+          "Background color for even-numbered rows in a tree.",
+        ],
+        [
+          "-moz-html-CellHighlight",
+          "Background color for highlighted item in HTML <select>s.",
+        ],
+        [
+          "-moz-html-CellHighlightText",
+          "Text color for highlighted items in HTML <select>s.",
+        ],
+        ["-moz-MenuHover", "Background color for hovered menu items."],
+        ["-moz-MenuHoverText", "Text color for hovered menu items."],
+        ["-moz-MenuBarText", "Text color in menu bars."],
+        ["-moz-MenuBarHoverText", "Color for hovered text in menu bars."],
+        ["-moz-nativehyperlinktext", "Default platform hyperlink color."],
+        [
+          "-moz-OddTreeRow",
+          "Background color for odd-numbered rows in a tree.",
+        ],
+      ];
+
+      const addRow = (table, entry) => {
+        const image = document.createElement("img");
+        image.style.color = entry[0];
+        console.log("computed", getComputedStyle(image, null).color);
+
+        const newRow =
+          image.style.color === ""
+            ? `
+                    <tr>
+                        <td><strong>${entry[0]}</strong></td>
+                        <td>${entry[1]}</td>
+                        <td style="border: 1px solid black">N/A</td>  
+                    </tr>`
+            : `
+                    <tr>
+                        <td><strong>${entry[0]}</strong></td>
+                        <td>${entry[1]}</td>
+                        <td style="background-color: ${entry[0]}; width:50px; border: 1px solid black">
+                    </tr>`;
+
+        table.innerHTML += newRow;
+      };
+
+      const moep = () => {
+        systemColors.forEach((entry) => {
+          addRow(systemTableElement, entry);
+        });
+
+        mozColors.forEach((entry) => {
+          addRow(mozTableElement, entry);
+        });
+      };
+
+      moep();
+    </script>
+  </body>
+</html>
