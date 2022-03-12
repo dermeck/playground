@@ -138,14 +138,12 @@
 
         const colorInRgb = window.getComputedStyle(image).color;
 
-        //console.log(`${colorKeyword} computed color in RGB`, colorInRgb);
+        console.log(`${colorKeyword} computed color in RGB`, colorInRgb);
 
         const canvasContext = document.createElement("canvas").getContext("2d");
         canvasContext.fillStyle = colorKeyword;
 
         colorInHex = canvasContext.fillStyle;
-
-        //console.log("canvasContext.fillStyle", colorInHex);
 
         canvasContext.fillRect(0, 0, 1, 1);
         const data = canvasContext.getImageData(0, 0, 1, 1).data;
