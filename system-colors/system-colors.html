@@ -123,9 +123,17 @@
       ];
 
       const addRow = (table, entry) => {
+        const colorKeyword = entry[0];
+
         const image = document.createElement("img");
-        image.style.color = entry[0];
-        console.log("computed", getComputedStyle(image, null).color);
+        image.style.color = colorKeyword;
+        image.id = colorKeyword;
+
+        document.body.appendChild(image);
+        console.log(
+          `${colorKeyword} computed color in RGB`,
+          window.getComputedStyle(image).color
+        );
 
         const newRow =
           image.style.color === ""
