@@ -130,10 +130,17 @@
         image.id = colorKeyword;
 
         document.body.appendChild(image);
-        console.log(
-          `${colorKeyword} computed color in RGB`,
-          window.getComputedStyle(image).color
-        );
+
+        const colorInRgb = window.getComputedStyle(image).color;
+
+        console.log(`${colorKeyword} computed color in RGB`, colorInRgb);
+
+        const canvasContext = document.createElement("canvas").getContext("2d");
+        canvasContext.fillStyle = colorKeyword;
+
+        colorInHex = canvasContext.fillStyle;
+
+        console.log("canvasContext.fillStyle", colorInHex);
 
         const newRow =
           image.style.color === ""
@@ -141,12 +148,16 @@
                     <tr>
                         <td><strong>${entry[0]}</strong></td>
                         <td>${entry[1]}</td>
-                        <td style="border: 1px solid black">N/A</td>  
+                        <td></td>
+                        <td></td>
+                        <td style="border: 1px solid black">N/A</td>
                     </tr>`
             : `
                     <tr>
                         <td><strong>${entry[0]}</strong></td>
                         <td>${entry[1]}</td>
+                        <td>${colorInRgb}</td>
+                        <td>${colorInHex}</td>
                         <td style="background-color: ${entry[0]}; width:50px; border: 1px solid black">
                     </tr>`;
 
