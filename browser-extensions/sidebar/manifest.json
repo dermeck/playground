@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "version": "0.1",
+    "name": "Test different UI Elements",
+
+    "icons": {
+        "48": "tool.svg"
+    },
+
+    "permissions": ["tabs", "activeTab"],
+
+    // FF Developer Edition does not show sidebar with "never remember history" set
+    // shows service worker disabeld warning in about:debugging
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1266415
+    "sidebar_action": {
+        "default_title": "My sidebar",
+        "default_panel": "sidebar/sidebar.html",
+        "default_icon": "tool.svg"
+      }
+}
