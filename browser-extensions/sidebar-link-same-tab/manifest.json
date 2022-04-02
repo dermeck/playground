@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "version": "0.1",
+  "name": "Open sidebar links in same tab",
+
+  "icons": {
+    "48": "tool.svg"
+  },
+
+  "permissions": ["tabs", "activeTab"],
+
+  "sidebar_action": {
+    "default_title": "My sidebar",
+    "default_panel": "sidebar/sidebar.html",
+    "default_icon": "tool.svg"
+  }
+}
