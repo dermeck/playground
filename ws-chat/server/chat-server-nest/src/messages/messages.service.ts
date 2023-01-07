@@ -19,8 +19,11 @@ export class MessagesService {
     return this.clientToUser[clientId];
   }
 
-  create(createMessageDto: CreateMessageDto) {
-    const message = { ...createMessageDto };
+  create(createMessageDto: CreateMessageDto, clientId: string) {
+    const message: Message = {
+      userName: this.clientToUser[clientId],
+      content: createMessageDto.content,
+    };
     this.messages.push(message); // TODO identify user
 
     return message; // returns to sender
