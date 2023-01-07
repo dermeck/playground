@@ -25,11 +25,6 @@ export class MessagesGateway {
     return this.messagesService.findAll();
   }
 
-  @SubscribeMessage('findOneMessage')
-  findOne(@MessageBody() id: number) {
-    return this.messagesService.findOne(id);
-  }
-
   @SubscribeMessage('updateMessage')
   update(@MessageBody() updateMessageDto: UpdateMessageDto) {
     return this.messagesService.update(updateMessageDto.id, updateMessageDto);
@@ -38,5 +33,15 @@ export class MessagesGateway {
   @SubscribeMessage('removeMessage')
   remove(@MessageBody() id: number) {
     return this.messagesService.remove(id);
+  }
+
+  @SubscribeMessage('join')
+  joinRoom() {
+    // TODO
+  }
+
+  @SubscribeMessage('typing')
+  async typing() {
+    // TODO
   }
 }
