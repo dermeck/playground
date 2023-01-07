@@ -3,6 +3,7 @@ import {
   SubscribeMessage,
   MessageBody,
   WebSocketServer,
+  ConnectedSocket,
 } from '@nestjs/websockets';
 import { MessagesService } from './messages.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -45,9 +46,13 @@ export class MessagesGateway {
     return this.messagesService.remove(id);
   }
 
-  @SubscribeMessage('join')
-  joinRoom() {
-    // TODO
+  @SubscribeMessage('joinRoom')
+  joinRoom(
+    @MessageBody('userName') userName: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    // TODO support multiple rooms
+    return this.messagesService.identify(userName, client.id);
   }
 
   @SubscribeMessage('typing')

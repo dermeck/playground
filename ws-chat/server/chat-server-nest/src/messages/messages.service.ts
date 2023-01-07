@@ -5,7 +5,19 @@ import { Message } from './entities/message.entity';
 
 @Injectable()
 export class MessagesService {
+  // TODO use db
   messages: Message[] = [{ userName: 'Max', content: 'moep' }];
+  clientToUser = {};
+
+  identify(userName: string, clientId: string) {
+    this.clientToUser[clientId] = userName;
+
+    return Object.values(this.clientToUser);
+  }
+
+  getCLientByName(clientId: string) {
+    return this.clientToUser[clientId];
+  }
 
   create(createMessageDto: CreateMessageDto) {
     const message = { ...createMessageDto };
