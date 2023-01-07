@@ -56,7 +56,13 @@ export class MessagesGateway {
   }
 
   @SubscribeMessage('typing')
-  async typing() {
-    // TODO
+  async typing(
+    @MessageBody('usTyping') isTyping: boolean,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const name = await this.messagesService.getCLientByName(client.id);
+
+    // inform clients that are not the sender who is typing
+    client.broadcast.emit('typing', { name, isTyping });
   }
 }
