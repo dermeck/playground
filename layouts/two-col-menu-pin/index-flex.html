@@ -16,6 +16,7 @@
       }
 
       .left {
+        position: absolute;
         /* display: none; */
         background: cornflowerblue;
         width: 250px;
@@ -29,11 +30,21 @@
         height: 100vh;
       }
 
+      button {
+        margin-top: 20px;
+      }
+
+      .relative {
+        position: relative;
+      }
+
+      /*
       @media only screen and (max-width: 1400px) {
         .left {
           position: absolute;
         }
       }
+      */
     </style>
   </head>
   <body>
@@ -48,6 +59,7 @@
         sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
         rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
         ipsum dolor sit amet.
+        <button id="pinBtn">pin/unpin</button>
       </div>
       <div class="right">
         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
@@ -62,4 +74,18 @@
       </div>
     </div>
   </body>
+
+  <script>
+    document.addEventListener("click", function (e) {
+      if (e.target.id == "pinBtn") {
+        const leftEl = document.getElementsByClassName("left")[0];
+        console.log(leftEl);
+        if (leftEl.classList.contains("relative")) {
+          leftEl.classList.remove("relative");
+        } else {
+          leftEl.classList.add("relative");
+        }
+      }
+    });
+  </script>
 </html>
