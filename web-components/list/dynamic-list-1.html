@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic List Web Component</title>
+  </head>
+  <body>
+    <dynamic-list></dynamic-list>
+
+    <script>
+      // Define the dynamic-list component
+      class DynamicList extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+          this.items = []; // List of items to be displayed
+        }
+
+        connectedCallback() {
+          this.render();
+        }
+
+        // Add a new item to the list and re-render
+        addItem(item) {
+          this.items.push(item);
+          this.render();
+        }
+
+        // Render the list and the button
+        render() {
+          // Creating list items dynamically
+          const listItems = this.items
+            .map((item) => `<li>${item}</li>`)
+            .join("");
+          const listHTML = `
+                    <style>
+                        ul {
+                            list-style-type: none;
+                            padding: 0;
+                        }
+                        li {
+                            background-color: #f4f4f4;
+                            margin: 5px;
+                            padding: 10px;
+                            border-radius: 4px;
+                        }
+                        button {
+                            padding: 10px 15px;
+                            background-color: #4CAF50;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        }
+                        button:hover {
+                            background-color: #45a049;
+                        }
+                    </style>
+                    <ul>
+                        ${listItems}
+                    </ul>
+                    <button id="add-item">Add Item</button>
+                `;
+
+          this.shadowRoot.innerHTML = listHTML;
+
+          // Attach event listener to button
+          this.shadowRoot
+            .getElementById("add-item")
+            .addEventListener("click", () => {
+              const newItem = `Item ${this.items.length + 1}`; // Generate a new item name
+              this.addItem(newItem); // Add the new item
+            });
+        }
+      }
+
+      // Define the custom element
+      customElements.define("dynamic-list", DynamicList);
+    </script>
+  </body>
+</html>

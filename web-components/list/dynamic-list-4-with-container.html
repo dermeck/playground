@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic List with Delete Button</title>
+  </head>
+  <body>
+    <state-container></state-container>
+
+    <script>
+      // ListItem Component
+      class ListItem extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+        }
+
+        connectedCallback() {
+          const content = this.getAttribute("content") || "Default Content";
+          this.render(content);
+        }
+
+        render(content) {
+          this.shadowRoot.innerHTML = `
+                    <style>
+                        div {
+                            background-color: #f4f4f4;
+                            margin: 5px;
+                            padding: 10px;
+                            border-radius: 4px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        button {
+                            background-color: red;
+                            color: white;
+                            border: none;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                            border-radius: 4px;
+                        }
+                        button:hover {
+                            background-color: darkred;
+                        }
+                    </style>
+                    <div>
+                        <span>${content}</span>
+                        <button id="delete-button">Delete</button>
+                    </div>
+                `;
+
+          // Add event listener for delete button
+          this.shadowRoot
+            .querySelector("#delete-button")
+            .addEventListener("click", () => {
+              this.dispatchEvent(
+                new CustomEvent("delete-item", {
+                  bubbles: true,
+                  composed: true,
+                })
+              );
+            });
+        }
+      }
+
+      customElements.define("list-item", ListItem);
+
+      // List Component
+      class List extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+        }
+
+        static get observedAttributes() {
+          return ["items"]; // Observe the 'items' attribute
+        }
+
+        connectedCallback() {
+          this.render();
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+          if (name === "items") {
+            this.updateList(JSON.parse(newValue)); // Parse the items and update list
+          }
+        }
+
+        render() {
+          this.shadowRoot.innerHTML = `
+                    <div id="list-container"></div>
+                `;
+        }
+
+        // Method to update the list by adding items
+        updateList(items) {
+          const listContainer =
+            this.shadowRoot.querySelector("#list-container");
+          listContainer.innerHTML = ""; // Clear previous content
+
+          items.forEach((item) => {
+            const listItem = document.createElement("list-item");
+            listItem.setAttribute("content", item);
+            listItem.addEventListener("delete-item", () =>
+              this.dispatchEvent(
+                new CustomEvent("delete-item", {
+                  detail: item,
+                  bubbles: true,
+                  composed: true,
+                })
+              )
+            );
+            listContainer.appendChild(listItem);
+          });
+        }
+      }
+
+      customElements.define("list-component", List);
+
+      // StateContainer Component
+      class StateContainer extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+          this.items = ["Item 1", "Item 2", "Item 3"]; // Initial items
+        }
+
+        connectedCallback() {
+          this.render();
+          this.addEventListeners();
+          this.updateList();
+        }
+
+        render() {
+          this.shadowRoot.innerHTML = `
+                    <style>
+                        button {
+                            background-color: green;
+                            color: white;
+                            border: none;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                            border-radius: 4px;
+                        }
+                        button:hover {
+                            background-color: darkgreen;
+                        }
+                    </style>
+                    <list-component id="list"></list-component>
+                    <button id="add-item">Add Item</button>
+                `;
+        }
+
+        addEventListeners() {
+          this.shadowRoot
+            .querySelector("#add-item")
+            .addEventListener("click", () => this.addItem());
+          this.shadowRoot
+            .querySelector("list-component")
+            .addEventListener("delete-item", (e) => this.removeItem(e.detail));
+        }
+
+        addItem() {
+          const newItem = `Item ${this.items.length + 1}`;
+          this.items.push(newItem);
+          this.updateList();
+        }
+
+        removeItem(item) {
+          this.items = this.items.filter(
+            (existingItem) => existingItem !== item
+          );
+          this.updateList();
+        }
+
+        updateList() {
+          const listComponent = this.shadowRoot.querySelector("list-component");
+          listComponent.setAttribute("items", JSON.stringify(this.items)); // Pass items as a JSON string attribute
+        }
+      }
+
+      customElements.define("state-container", StateContainer);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic List with Custom Items</title>
+  </head>
+  <body>
+    <dynamic-list items="Item 1, Item 2, Item 3"></dynamic-list>
+
+    <script>
+      // Define the custom list-item element
+      class ListItem extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+        }
+
+        connectedCallback() {
+          const textContent = this.getAttribute("content") || "Default Content";
+          this.render(textContent);
+        }
+
+        render(content) {
+          this.shadowRoot.innerHTML = `
+                    <style>
+                        div {
+                            background-color: #f4f4f4;
+                            margin: 5px;
+                            padding: 10px;
+                            border-radius: 4px;
+                        }
+                    </style>
+                    <div>${content}</div>
+                `;
+        }
+      }
+
+      // Define the custom element for list items
+      customElements.define("list-item", ListItem);
+
+      // Define the dynamic-list element
+      class DynamicList extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+        }
+
+        connectedCallback() {
+          this.render();
+        }
+
+        // Render the list with dynamic list-items
+        render() {
+          // Get items from the attribute and split them by comma
+          const items = this.getAttribute("items")
+            ? this.getAttribute("items").split(",")
+            : [];
+
+          // Create a list and append list-item elements dynamically
+          const listHTML = items
+            .map((item) => {
+              const listItem = document.createElement("list-item");
+              listItem.setAttribute("content", item.trim()); // Pass the item text as an attribute
+              return listItem.outerHTML; // Return outer HTML of list-item element
+            })
+            .join("");
+
+          const listMarkup = `
+                    <style>
+                        ul {
+                            list-style-type: none;
+                            padding: 0;
+                        }
+                        li {
+                            margin: 5px;
+                        }
+                    </style>
+                    <ul>
+                        ${listHTML}
+                    </ul>
+                    <button id="add-item">Add Item</button>
+                `;
+
+          this.shadowRoot.innerHTML = listMarkup;
+
+          // Add event listener to add more items dynamically
+          this.shadowRoot
+            .querySelector("#add-item")
+            .addEventListener("click", () => {
+              const newItem = `Item ${items.length + 1}`;
+              items.push(newItem);
+              this.setAttribute("items", items.join(",")); // Update the attribute
+              this.render(); // Re-render the list with the new item
+            });
+        }
+      }
+
+      // Define the dynamic-list custom element
+      customElements.define("dynamic-list", DynamicList);
+    </script>
+  </body>
+</html>

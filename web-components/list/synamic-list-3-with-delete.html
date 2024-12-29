@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic List with Delete Button</title>
+  </head>
+  <body>
+    <dynamic-list items="Item 1, Item 2, Item 3"></dynamic-list>
+
+    <script>
+      // Define the custom list-item element
+      class ListItem extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+        }
+
+        connectedCallback() {
+          const content = this.getAttribute("content") || "Default Content";
+          this.render(content);
+        }
+
+        render(content) {
+          this.shadowRoot.innerHTML = `
+                    <style>
+                        div {
+                            background-color: #f4f4f4;
+                            margin: 5px;
+                            padding: 10px;
+                            border-radius: 4px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        button {
+                            background-color: red;
+                            color: white;
+                            border: none;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                            border-radius: 4px;
+                        }
+                        button:hover {
+                            background-color: darkred;
+                        }
+                    </style>
+                    <div>
+                        <span>${content}</span>
+                        <button id="delete-button">Delete</button>
+                    </div>
+                `;
+
+          // Add event listener for delete button
+          this.shadowRoot
+            .querySelector("#delete-button")
+            .addEventListener("click", () => {
+              this.dispatchEvent(
+                new CustomEvent("delete-item", {
+                  bubbles: true,
+                  composed: true,
+                })
+              );
+            });
+        }
+      }
+
+      // Define the custom element for list items
+      customElements.define("list-item", ListItem);
+
+      // Define the dynamic-list element
+      class DynamicList extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+          this.items = this.getAttribute("items")
+            ? this.getAttribute("items").split(",")
+            : [];
+        }
+
+        connectedCallback() {
+          this.render();
+        }
+
+        // Render the list with dynamic list-items
+        render() {
+          // Create the list container and Add Item button
+          const listMarkup = `
+                    <style>
+                        ul {
+                            list-style-type: none;
+                            padding: 0;
+                        }
+                        li {
+                            margin: 5px;
+                        }
+                    </style>
+                    <ul id="list"></ul>
+                    <button id="add-item">Add Item</button>
+                `;
+          this.shadowRoot.innerHTML = listMarkup;
+
+          // Now that the list container is available, we can create and append the list items
+          const listContainer = this.shadowRoot.querySelector("#list");
+
+          // Create the list items based on the current items array
+          this.items.forEach((item) => {
+            const listItem = document.createElement("list-item");
+            listItem.setAttribute("content", item.trim()); // Pass the item text as an attribute
+
+            // Listen for the delete-item event and remove the item from the list
+            listItem.addEventListener("delete-item", () =>
+              this.removeItem(item.trim())
+            );
+
+            listContainer.appendChild(listItem);
+          });
+
+          // Add event listener to add more items dynamically
+          this.shadowRoot
+            .querySelector("#add-item")
+            .addEventListener("click", () => {
+              const newItem = `Item ${this.items.length + 1}`;
+              this.items.push(newItem);
+              this.setAttribute("items", this.items.join(",")); // Update the attribute
+              this.render(); // Re-render the list with the new item
+            });
+        }
+
+        // Method to remove an item
+        removeItem(item) {
+          // Remove the item from the array
+          this.items = this.items.filter(
+            (existingItem) => existingItem !== item
+          );
+          this.setAttribute("items", this.items.join(",")); // Update the attribute
+          this.render(); // Re-render the list after removal
+        }
+      }
+
+      // Define the dynamic-list custom element
+      customElements.define("dynamic-list", DynamicList);
+    </script>
+  </body>
+</html>
